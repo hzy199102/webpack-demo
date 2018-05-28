@@ -56,3 +56,12 @@ npm install -D webpack-cli 等价于 npm install --save-dev webpack-cli
 6..\node_modules\.bin\webpack src\index.js dist\bundle.js 无效
 官网命令写错了，应该是：.\node_modules\.bin\webpack src\index.js --output dist\bundle.js
 
+
+7.webpack 4.x 打包总是加密压缩，影响开发
+webpack功能强大，有很多独特的功能，但其中一个难点是配置文件。为此,webpack团队改变了这一现状：webpack 4默认不需要配置文件。
+可以通过mode选项为webpack指定一些默认的配置。mode分为development/production,默认为production。每个选项的默认配置如下(common指两个配置项都存在的属性):
+https://segmentfault.com/a/1190000013712229
+
+
+8.
+
