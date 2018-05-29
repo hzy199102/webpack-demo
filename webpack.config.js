@@ -1,22 +1,34 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const ManifestPlugin = require('webpack-manifest-plugin');
+const webpack = require('webpack');
 
 module.exports = {
     entry: {
-        print: './src/print.js',
-        app: './src/index.js',
+        index: './src/index.js',
+        another: './src/another-module.js'
     },
-    output: {
-        filename: '[name].bundle.js',
-        path: path.resolve(__dirname, 'dist')
+    devtool: 'inline-source-map',
+    module: {
+        rules: [{
+            test: /\.js$/,
+            use: {
+                loader: 'babel-loader'
+            },
+            exclude: /node_modules/
+        }]
     },
     plugins: [
         new CleanWebpackPlugin(['dist']),
-        new ManifestPlugin(),
-             new HtmlWebpackPlugin({
-                   title: 'Output Management'
-     })
-   ],
+        new HtmlWebpackPlugin({
+            title: 'Code Splitting'
+        }),
+        new webpack.optimize.CommonsChunkPlugin({
+              name: 'common' // Specify the common bundle's name.
+        })
+    ],
+    output: {
+        filename: '[name].bundle.js',
+        path: path.resolve(__dirname, 'dist'),
+    }
 };

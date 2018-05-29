@@ -63,5 +63,24 @@ webpack功能强大，有很多独特的功能，但其中一个难点是配置�
 https://segmentfault.com/a/1190000013712229
 
 
-8.
+8.webpack 4.x 默认不需要配置文件带来的问题
+开发模式下，选择mode为development，默认devtool:eval（生成后的代码，构建和重构建极快），
+但或许devtool:inline-source-map（原始源码，构建和重构建极慢）更好。
 
+
+9.webpack热更新的原理
+
+
+10.webpack4.x对应webpack-dev-server3.x,异常的缓慢，但是切换到webpack2.x对应webpack-dev-server2.x就异常流畅，怎么修正
+我推测是在3.x需要加入更多的配置，另外webpack4.x一定要配置webpack-cli,然后webpack-dev-server就一定要3.x，这是配套的
+
+
+11.调用了以下命令，但是仍然没用移除JavaScript 上下文中无用代码
+node_modules\.bin\webpack --mode development src\main.js --output dist\dist.js
+node_modules\.bin\webpack  --optimize-minimize src\main.js --output dist\dist.js
+cd E:\git\webpack\examples\aggressive-merging && node build.js
+
+12.webpack4.x坑太多，降级到3.x继续调研
+我操，降级到3.x tree shaking就正常了，4.x的side-effect实在是纯英文，难懂
+
+node_modules\.bin\webpack --optimize-minimize src\index.js  --output-path dist\dist.min.js
