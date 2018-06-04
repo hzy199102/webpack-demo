@@ -98,4 +98,65 @@ dev-server.js:52Uncaught Error: [HMR] Hot Module Replacement is disabled.(…)
 d.需要加入各种loader或者插件去实现后台刷新，比如css文件的热更新使用'style-loader', 'css-loader'
 e.其他vue，react，angular都有各自loader和插件，用时在查
 
-node_modules\.bin\webpack --optimize-minimize src\index.js  --output-path dist\dist.min.js
+14.label-loader es5,6,7的特性
+npm install babel-core babel-loader --save-dev
+npm install babel-preset-es2015 --save-dev
+npm install babel-preset-react --save-dev
+npm install babel-preset-stage-0 --save-dev
+npm install babel-polyfill --save
+npm install babel-runtime --save
+npm install babel-plugin-transform-runtime --save-dev
+
+https://www.jianshu.com/p/6969b8822630 Using ES6 and ES7 in the Browser, with Babel 6 and Webpack
+https://www.cnblogs.com/shiyunfront/p/7338384.html babel-runtime 使用场景
+https://www.cnblogs.com/chris-oil/p/5717544.html 如何区分Babel中的stage-0,stage-1,stage-2以及stage-3（一）
+你可以尝试一下babel-preset-es2015，这是ES6转换的一个合集，如果你在使用JSX，你可能需要babel-preset-react。
+而且如果你想要玩玩火，你可以加入babel-preset-stage-0来尝试ES7的新特性，async或者await等等
+错误：await is a reserved word 原因：When using await in a function it must be marked as async
+错误：SyntaxError: src/index.js: Unexpected token (4:20) const _ = await import(/* webpackChunkName: "lodash" */'lodash');
+原因：.babelrc文件配置'stage-3'，资料显示这样就能支持es7新特性await，但是我发现要支持await import则要升级为stage-0,
+但是这样打包体积更大，显然不可取
+lodash.bundle.js    1.43 MB       0  [emitted]  [big]  lodash
+ index.bundle.js    1.97 MB       1  [emitted]  [big]  index
+去掉await
+lodash.bundle.js    1.43 MB       0  [emitted]  [big]  lodash
+ index.bundle.js    1.15 MB       1  [emitted]  [big]  index
+去掉babelrc的"plugins": ["transform-runtime"]
+lodash.bundle.js    1.43 MB       0  [emitted]  [big]  lodash
+ index.bundle.js     924 kB       1  [emitted]  [big]  index
+不过如果在生产环境node_modules\.bin\webpack --optimize-minimize，千万注意devtool: 'inline-source-map',这句要去掉，这是开发环境的
+lodash.bundle.js    72.4 kB       0  [emitted]  lodash
+ index.bundle.js    46.8 kB       1  [emitted]  index
+ babel-polyfill太大了，可以单项引用
+https://github.com/zloirock/core-js#commonjs
+
+15.es7的asynv/await
+个人感觉相对于promise有代码上的简洁
+https://blog.csdn.net/loveyouyouno/article/details/76794477
+https://cnodejs.org/topic/5640b80d3a6aa72c5e0030b6
+https://www.cnblogs.com/whybxy/p/7645578.html
+
+16.分析 Bundle Analysis
+https://alexkuz.github.io/webpack-chart/
+
+https://www.cnblogs.com/libin-1/p/7027164.html webpack教程
+
+17.代码拆分
+三种方法
+a.动态导入
+output: {
+    filename: '[name].bundle.js',
+    chunkFilename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist')
+}
+const _ = await import(/* webpackChunkName: "lodash" */'lodash');
+切记await一定要与async合用，improt返回的是promise对象
+b.防止重复
+new webpack.optimize.CommonsChunkPlugin({
+    name: 'common' // Specify the common bundle's name.
+})
+c.手动分离
+entry的手动配置
+
+18.懒加载
+https://alexjoverm.github.io/2017/07/16/Lazy-load-in-Vue-using-Webpack-s-code-splitting/ vue的方案

@@ -4,7 +4,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
 module.exports = {
     entry: {
-        index: './src/three_lazy/index.js'
+        index: './src/two/index.js'
     },
     plugins: [
         new CleanWebpackPlugin(['dist']),
