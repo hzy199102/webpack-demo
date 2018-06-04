@@ -16,7 +16,15 @@ module.exports = {
                 loader: 'babel-loader'
             },
             exclude: /node_modules/
+        },
+        {
+            test: /\.css$/,
+            use: ['style-loader', 'css-loader']
         }]
+    },
+    devServer: {
+        contentBase: './dist',
+        hot: true
     },
     plugins: [
         new CleanWebpackPlugin(['dist']),
@@ -25,7 +33,9 @@ module.exports = {
         }),
         new webpack.optimize.CommonsChunkPlugin({
               name: 'common' // Specify the common bundle's name.
-        })
+        }),
+        new webpack.NamedModulesPlugin(),
+        new webpack.HotModuleReplacementPlugin()
     ],
     output: {
         filename: '[name].bundle.js',

@@ -83,4 +83,19 @@ cd E:\git\webpack\examples\aggressive-merging && node build.js
 12.webpack4.x坑太多，降级到3.x继续调研
 我操，降级到3.x tree shaking就正常了，4.x的side-effect实在是纯英文，难懂
 
+13.热更新
+a."start": "webpack-dev-server --open", 只写这句，不会热更新，但会刷新页面更新
+b."start": "webpack-dev-server --open --hotOnly", 只写这句，不会热更新，也不会页面刷新，会提示：
+c.The following modules couldn't be hot updated: (They would need a full reload!)
+"start": "webpack-dev-server --open"
+devServer: {
+    contentBase: './dist',
+    hot: true
+},会报错：
+dev-server.js:52Uncaught Error: [HMR] Hot Module Replacement is disabled.(…)
+再加入new webpack.NamedModulesPlugin(),
+但是还是不会热更新，但会刷新页面更新
+d.需要加入各种loader或者插件去实现后台刷新，比如css文件的热更新使用'style-loader', 'css-loader'
+e.其他vue，react，angular都有各自loader和插件，用时在查
+
 node_modules\.bin\webpack --optimize-minimize src\index.js  --output-path dist\dist.min.js
