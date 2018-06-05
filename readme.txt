@@ -80,8 +80,10 @@ node_modules\.bin\webpack --mode development src\main.js --output dist\dist.js
 node_modules\.bin\webpack  --optimize-minimize src\main.js --output dist\dist.js
 cd E:\git\webpack\examples\aggressive-merging && node build.js
 
+
 12.webpack4.x坑太多，降级到3.x继续调研
 我操，降级到3.x tree shaking就正常了，4.x的side-effect实在是纯英文，难懂
+
 
 13.热更新
 a."start": "webpack-dev-server --open", 只写这句，不会热更新，但会刷新页面更新
@@ -97,6 +99,7 @@ dev-server.js:52Uncaught Error: [HMR] Hot Module Replacement is disabled.(…)
 但是还是不会热更新，但会刷新页面更新
 d.需要加入各种loader或者插件去实现后台刷新，比如css文件的热更新使用'style-loader', 'css-loader'
 e.其他vue，react，angular都有各自loader和插件，用时在查
+
 
 14.label-loader es5,6,7的特性
 npm install babel-core babel-loader --save-dev
@@ -130,16 +133,19 @@ lodash.bundle.js    72.4 kB       0  [emitted]  lodash
  babel-polyfill太大了，可以单项引用
 https://github.com/zloirock/core-js#commonjs
 
+
 15.es7的asynv/await
 个人感觉相对于promise有代码上的简洁
 https://blog.csdn.net/loveyouyouno/article/details/76794477
 https://cnodejs.org/topic/5640b80d3a6aa72c5e0030b6
 https://www.cnblogs.com/whybxy/p/7645578.html
 
+
 16.分析 Bundle Analysis
 https://alexkuz.github.io/webpack-chart/
 
 https://www.cnblogs.com/libin-1/p/7027164.html webpack教程
+
 
 17.代码拆分
 三种方法
@@ -158,5 +164,47 @@ new webpack.optimize.CommonsChunkPlugin({
 c.手动分离
 entry的手动配置
 
+
 18.懒加载
 https://alexjoverm.github.io/2017/07/16/Lazy-load-in-Vue-using-Webpack-s-code-splitting/ vue的方案
+tree_lazy 可以查看promise和await的区别，await显然用的更爽，不需要then的方法体做操作
+
+
+19.cache
+如果文件内容不改变，npm run build的结果不会改变，哪怕重启idea都不会改变，看来chunkhash的值应该和文件内容有关，
+为了验证，把内容修改一下在改回去，发现的确如此，chunkhash的值只与文件内容有关，和编译时间，是否重启idea无关。
+CommonsChunkPlugin，我之前的认知是分离共同的代码，现在才发现还有2个作用，
+第一：能够在每次修改后的构建结果中，将 webpack 的样板(boilerplate)和 manifest 提取出来。
+通过指定 entry 配置中未用到的名称，此插件会自动将我们需要的内容提取到单独的包中：
+第二：将第三方库(library)（例如 lodash 或 react）提取到单独的 vendor chunk 文件中
+修改index.js的内容引入新的print.js模块，发现三个文件都变化了，这是因为每个 module.id 会基于默认的解析顺序(resolve order)进行增量。
+也就是说，当解析顺序发生变化，ID 也会随之改变。因此，简要概括：
+main bundle 会随着自身的新增内容的修改，而发生变化。
+vendor bundle 会随着自身的 module.id 的修改，而发生变化。
+runtime bundle 会因为当前包含一个新模块的引用，而发生变化。
+使用模块标识符去解决这个问题，就是加入插件new webpack.HashedModuleIdsPlugin(),
+
+
+20.创建库对我来说太遥远，跳过吧
+
+
+21.NODE_ENV不是内部或外部命令,也不是可运行的程序
+解决办法：安装across-env:
+npm install cross-env –save-dev
+"build_p": "cross-env NODE_ENV=production PLATFORM=web webpack",
+当然也可以不安装across-env，而是如下写法
+"build_p2": "set NODE_ENV=development && set PLATFORM=web && webpack",
+事实上，以上脚本合并两条命令（这种操作在powershell中不被支持，在cmd中也不被支持，这是Mac中bash或Linux的shell中的独特操作）
+
+
+22.shimming 太复杂，等到有实际场景的时候再见招拆招
+
+
+23.typescript的webpack支持
+首先需要了解typescript到底是什么
+https://segmentfault.com/q/1010000010574476
+
+
+24.vagrant
+https://blog.csdn.net/ty_hf/article/details/78314583?locationNum=4&fps=1
+https://www.jianshu.com/p/e87ebc032924

@@ -21,10 +21,6 @@ module.exports = {
         }),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'runtime'
-        }),
-        new webpack.optimize.UglifyJsPlugin({
-            //compress: true
-            compress: process.env.NODE_ENV === 'production'
         })
     ],
     output: {

@@ -12,11 +12,16 @@
 
            // Note that because a network request is involved, some indication
                // of loading would need to be shown in a production-level site/app.
-                   button.onclick = e => import(/* webpackChunkName: "print" */ './print').then(module => {
-             var print = module.default;
+           //        button.onclick = e => import(/* webpackChunkName: "print" */ './print').then(module => {
+           //  var print = module.default;
+           //
+           //      print();
+           //});
 
-                 print();
-           });
+     button.onclick = async function (e) {
+         const print = (await import('./print')).default
+         print()
+     }
 
     return element;
 }

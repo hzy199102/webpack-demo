@@ -6,6 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
+    "build_p": "cross-env NODE_ENV=production PLATFORM=web webpack",
+    "build_p2": "set NODE_ENV=development && set PLATFORM=web && webpack",
     "build_4": "webpack --mode development",
     "watch": "webpack --watch",
     "start": "webpack-dev-server --open",
