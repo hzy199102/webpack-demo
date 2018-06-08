@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
+    "build": "webpack --env=4",
     "build_p": "cross-env NODE_ENV=production PLATFORM=web webpack",
     "build_p2": "set NODE_ENV=development && set PLATFORM=web && webpack",
     "build_4": "webpack --mode development",
     "watch": "webpack --watch",
-    "start": "webpack-dev-server --open",
+    "start": "webpack-dev-server --env=3",
     "server": "node server.js",
     "chart": "webpack --profile --json > stats.json"
   },
@@ -36,6 +36,7 @@
     "css-loader": "^0.28.11",
     "csv-loader": "^2.1.1",
     "express": "^4.16.3",
+    "extract-text-webpack-plugin": "^3.0.0-rc.2",
     "file-loader": "^1.1.11",
     "html-webpack-plugin": "^3.2.0",
     "style-loader": "^0.21.0",

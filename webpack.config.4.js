@@ -24,6 +24,14 @@ module.exports = {
         })
     ],
     output: {
+        library: "someLibName",
+        libraryTarget: "umd",
+        auxiliaryComment: {
+            root: "Root Comment",
+            commonjs: "CommonJS Comment",
+            commonjs2: "CommonJS2 Comment",
+            amd: "AMD Comment"
+        },
         filename: '[name].[chunkhash].js',
         path: path.resolve(__dirname, 'dist')
     }

@@ -1,1 +1,4 @@
-http://www.css88.com/doc/webpack/guides/output-management/
+代码分割
+http://www.css88.com/doc/webpack2/guides/code-splitting-css/
+
+http://www.css88.com/doc/webpack/api/module-methods/

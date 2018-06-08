@@ -142,6 +142,7 @@ https://www.cnblogs.com/whybxy/p/7645578.html
 
 
 16.分析 Bundle Analysis
+webpack --profile --json > stats.json
 https://alexkuz.github.io/webpack-chart/
 
 https://www.cnblogs.com/libin-1/p/7027164.html webpack教程
@@ -205,6 +206,28 @@ npm install cross-env –save-dev
 https://segmentfault.com/q/1010000010574476
 
 
-24.vagrant
+24.vagrant 以后有时间在研究
 https://blog.csdn.net/ty_hf/article/details/78314583?locationNum=4&fps=1
 https://www.jianshu.com/p/e87ebc032924
+https://www.jianshu.com/p/c88c8888b51a
+
+
+25.require
+import() 返回的是promise，另外require.ensure，所以为了适配老的浏览器，需要使用es6-promise or promise-polyfill.
+require.sure 代码分割
+http://www.css88.com/doc/webpack2/guides/code-splitting-require/
+
+
+26.代码分割（重要）
+js 就是缓存，类似19
+css 需要用到ExtractTextPlugin
+
+
+27.API部分太难了，不看
+
+
+28.output
+devtoolModuleFilenameTemplate
+在浏览器控制台查看webpack://下的内容，找到对应的包含源码的文件，这个有合适的默认值，一般无需修改，只有在生产环境用得到
+devtoolFallbackModuleFilenameTemplate
+devtoolModuleFilenameTemplate中的内容有重复的时候用到备用名称，这个基本用不到

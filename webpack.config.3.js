@@ -35,6 +35,7 @@ module.exports = {
     output: {
         filename: '[name].bundle.js',
         chunkFilename: '[name].bundle.js',
+        //devtoolModuleFilenameTemplate: 'webpack:///[absolute-resource-path]',
         path: path.resolve(__dirname, 'dist')
     }
 };

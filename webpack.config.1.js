@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
@@ -19,7 +20,10 @@ module.exports = {
         },
         {
             test: /\.css$/,
-            use: ['style-loader', 'css-loader']
+            //use: ['style-loader', 'css-loader'],
+            use: ExtractTextPlugin.extract({
+                use: 'css-loader'
+            })
         }]
     },
     devServer: {
@@ -35,7 +39,8 @@ module.exports = {
               name: 'common' // Specify the common bundle's name.
         }),
         new webpack.NamedModulesPlugin(),
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.HotModuleReplacementPlugin(),
+        new ExtractTextPlugin('styles.css')
     ],
     output: {
         filename: '[name].bundle.js',
