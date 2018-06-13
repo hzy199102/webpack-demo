@@ -3,6 +3,12 @@ import 'promise-polyfill/src/polyfill';
 import './layer/theme/default/layer.css';
 require.ensure([], function(require){
     require('./layer/layer.js')
+    layer.open({
+        type: 1,
+        skin: 'layui-layer-rim', //加上边框
+        area: ['420px', '240px'], //宽高
+        content: 'html内容'
+    });
 }, 'layer');
 
 //import photos from './photos.json'
@@ -57,9 +63,4 @@ document.body.appendChild(component());
 //    photos: photos
 //    ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
 //});
-layer.open({
-    type: 1,
-    skin: 'layui-layer-rim', //加上边框
-    area: ['420px', '240px'], //宽高
-    content: 'html内容'
-});
+

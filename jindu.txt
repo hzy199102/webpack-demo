@@ -2,3 +2,14 @@
 http://www.css88.com/doc/webpack2/guides/code-splitting-css/
 
 http://www.css88.com/doc/webpack/api/module-methods/
+
+http://www.css88.com/doc/webpack2/guides/code-splitting-require/
+https://blog.csdn.net/liangklfang/article/details/71172460
+
+https://github.com/webpack/webpack/issues/2776#issuecomment-233208623  __webpack_public_path__
+
+
+
+webpack 性能优化
+https://www.cnblogs.com/ssh-007/p/7944491.html
+http://www.ituring.com.cn/article/200534

@@ -215,12 +215,12 @@ https://www.jianshu.com/p/c88c8888b51a
 25.require
 import() 返回的是promise，另外require.ensure，所以为了适配老的浏览器，需要使用es6-promise or promise-polyfill.
 require.sure 代码分割
-http://www.css88.com/doc/webpack2/guides/code-splitting-require/
 
 
 26.代码分割（重要）
 js 就是缓存，类似19
 css 需要用到ExtractTextPlugin
+https://blog.csdn.net/liangklfang/article/details/55048516（必看 webpack的code spitting以及chunkfilename详解）
 
 
 27.API部分太难了，不看
@@ -231,6 +231,21 @@ devtoolModuleFilenameTemplate
 在浏览器控制台查看webpack://下的内容，找到对应的包含源码的文件，这个有合适的默认值，一般无需修改，只有在生产环境用得到
 devtoolFallbackModuleFilenameTemplate
 devtoolModuleFilenameTemplate中的内容有重复的时候用到备用名称，这个基本用不到
+chunkFilename
+这个参数极其重要，是按需加载，懒加载的关键，支持import和require，如下
+button.onclick = e => import(/* webpackChunkName: "print" */ './print').then(module => {}
+require.ensure([], function(require){
+    require('./layer/layer.js')
+    layer.open({
+        type: 1,
+        skin: 'layui-layer-rim', //加上边框
+        area: ['420px', '240px'], //宽高
+        content: 'html内容'
+    });
+}, 'layer');
+配置：chunkFilename: '[name].[chunkhash].js',这样会创建单独的文件，一般可用在cdn上，当然有个劣势，一个第三方库一个文件，目前没找到合并的方法
+
+
 
 
 29.引入layer
@@ -318,6 +333,7 @@ chunkhash没变，但是体积只有不到原来的不到8%
 json文件不能带有注释
 
 
-34.生产环境打包
+35.webpack 跨域问题处理
+https://www.jb51.net/article/138369.htm
 
 

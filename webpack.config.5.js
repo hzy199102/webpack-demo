@@ -12,7 +12,7 @@ module.exports = {
             'jquery'
         ]
     },
-    //devtool: 'inline-source-map',
+    devtool: 'inline-source-map',
     externals: {
     },
     module: {
@@ -53,7 +53,7 @@ module.exports = {
             name: 'runtime'
         }),
         new webpack.NamedModulesPlugin(),
-        //new webpack.HotModuleReplacementPlugin(),
+        new webpack.HotModuleReplacementPlugin(),
         new ExtractTextPlugin('styles.css'),
         new webpack.ProvidePlugin({
             $: 'jquery',
@@ -65,9 +65,9 @@ module.exports = {
         })
     ],
     output: {
-        filename: '[name].[chunkhash].js', // 生产环境使用
-        //filename: '[name].bundle.js',
-        chunkFilename: '[name].[chunkhash].js',
+        //filename: '[name].[chunkhash].js', // 生产环境使用
+        filename: '[name].bundle.js',
+        //chunkFilename: '[name].[chunkhash].js',
         path: path.resolve(__dirname, 'dist'),
     }
 };
