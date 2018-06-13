@@ -101,7 +101,7 @@ d.需要加入各种loader或者插件去实现后台刷新，比如css文件的
 e.其他vue，react，angular都有各自loader和插件，用时在查
 
 
-14.label-loader es5,6,7的特性
+14.label-loader es5,6,7的特性，webpack生产环境打包
 npm install babel-core babel-loader --save-dev
 npm install babel-preset-es2015 --save-dev
 npm install babel-preset-react --save-dev
@@ -231,3 +231,93 @@ devtoolModuleFilenameTemplate
 在浏览器控制台查看webpack://下的内容，找到对应的包含源码的文件，这个有合适的默认值，一般无需修改，只有在生产环境用得到
 devtoolFallbackModuleFilenameTemplate
 devtoolModuleFilenameTemplate中的内容有重复的时候用到备用名称，这个基本用不到
+
+
+29.引入layer
+这是紧急需求，相当于引入第三方库
+采用require引入，require('./layer/layer.js')，但是发现它关联jquery，于是全局引入jquery，当然也可以在它之前指定引入，但是jquery
+作为框架，可能会在多个组件使用，所以全局更合适
+new webpack.ProvidePlugin({
+    $: 'jquery',
+    jQuery: 'jquery',
+    'window.jQuery': 'jquery',
+    'window.$': 'jquery',
+    'window._': 'lodash',
+    '_': 'lodash'
+})
+这个插件会把jquery变成全局，它找的是npm的组件，我通过npm install jquery，引入了jquery
+这时候发现layer.css的默认样式没引入，于是单独引入import './layer/theme/default/layer.css';
+因为第三方库应该是不变的，所以应该代码拆分，如果是npm的第三方，可以直接拆分出：
+new webpack.optimize.CommonsChunkPlugin({
+    name: 'vendor'
+}),
+entry: {
+    index: './src/five_layer/index.js',
+    vendor: [
+        'lodash',
+        'jquery'
+    ]
+},
+但是layer是require进入的，只能
+require.ensure([], function(require){
+    require('./layer/layer.js')
+}, 'layer');
+output: {
+    filename: '[name].[chunkhash].js', // 生产环境使用
+    chunkFilename: '[name].[chunkhash].js',
+    path: path.resolve(__dirname, 'dist'),
+}
+但是使用require.ensure不兼容旧的浏览器，需要npm install promise-polyfill --save-dev，然后在入口文件引入import 'promise-polyfill/src/polyfill';
+这样打包，修改index的内容，第三方库依然缓存，性能优化
+layer.c1832156fdb61cfdbc78.js     252 kB       0  [emitted]  [big]  layer
+ba81b24c06e2e0eac1e219405b33766b.png    5.91 kB          [emitted]
+a72011ccdc2bcd23ba440f104c416193.gif    5.79 kB          [emitted]
+1140bc5c7863f8e54a3c2b179e640758.gif  701 bytes          [emitted]
+50c5e3e79b276c92df6cc52caeb464f0.gif    1.79 kB          [emitted]
+551539f873d9ebe0792b120a9867d399.png    11.5 kB          [emitted]
+       index.741c115e1fb6b9e2d293.js    64.9 kB       1  [emitted]         index
+      vendor.bfaeb71fcf0a1e38d599.js    2.18 MB       2  [emitted]  [big]  vendor
+     runtime.030d978f0289709c716c.js    13.9 kB       3  [emitted]         runtime
+                          styles.css    14.7 kB       1  [emitted]         index
+                          index.html  442 bytes          [emitted]
+
+ layer.c1832156fdb61cfdbc78.js     252 kB       0  [emitted]  [big]  layer
+ba81b24c06e2e0eac1e219405b33766b.png    5.91 kB          [emitted]
+a72011ccdc2bcd23ba440f104c416193.gif    5.79 kB          [emitted]
+1140bc5c7863f8e54a3c2b179e640758.gif  701 bytes          [emitted]
+50c5e3e79b276c92df6cc52caeb464f0.gif    1.79 kB          [emitted]
+551539f873d9ebe0792b120a9867d399.png    11.5 kB          [emitted]
+       index.92666d8a4ff09cd9ebce.js    64.9 kB       1  [emitted]         index
+      vendor.bfaeb71fcf0a1e38d599.js    2.18 MB       2  [emitted]  [big]  vendor
+     runtime.030d978f0289709c716c.js    13.9 kB       3  [emitted]         runtime
+                          styles.css    14.7 kB       1  [emitted]         index
+                          index.html  442 bytes          [emitted]
+但是能否将require的第三方库和npm的第三方库合成一个文件呢？
+这是最好的解决方案：
+https://www.cnblogs.com/webARM/p/5945208.html
+另外注意：这个时候生产环境打包node_modules\.bin\webpack --env=5 --optimize-minimize
+layer.c1832156fdb61cfdbc78.js    49.2 kB       0  [emitted]  layer
+ba81b24c06e2e0eac1e219405b33766b.png    5.91 kB          [emitted]
+a72011ccdc2bcd23ba440f104c416193.gif    5.79 kB          [emitted]
+1140bc5c7863f8e54a3c2b179e640758.gif  701 bytes          [emitted]
+50c5e3e79b276c92df6cc52caeb464f0.gif    1.79 kB          [emitted]
+551539f873d9ebe0792b120a9867d399.png    11.5 kB          [emitted]
+       index.92666d8a4ff09cd9ebce.js    9.04 kB       1  [emitted]  index
+      vendor.bfaeb71fcf0a1e38d599.js     160 kB       2  [emitted]  vendor
+     runtime.030d978f0289709c716c.js    1.41 kB       3  [emitted]  runtime
+                          styles.css    14.5 kB       1  [emitted]  index
+                          index.html  442 bytes          [emitted]
+chunkhash没变，但是体积只有不到原来的不到8%
+
+
+31.Cannot use [chunkhash] for chunk in '[name].[chunkhash].js' (use [hash] instead)
+去掉热更新，不要让webpack.HotModuleReplacementPlugin()在plugins里运行，否则会与filename: '[name].[chunkhash].js',冲突
+
+
+32.Module build failed: SyntaxError: Unexpected token / in JSON at position 18
+json文件不能带有注释
+
+
+34.生产环境打包
+
+

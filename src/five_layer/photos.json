@@ -1,0 +1,19 @@
+{
+  "title": "",
+  "id": 123,
+  "start": 0,
+  "data": [
+    {
+      "alt": "1",
+      "pid": 1,
+      "src": "require('./images/1.png')",
+      "thumb": "require('./images/1.png')"
+    },
+    {
+      "alt": "2",
+      "pid": 2,
+      "src": "require('./images/2.gif')",
+      "thumb": "require('./images/2.gif')"
+    }
+  ]
+}
