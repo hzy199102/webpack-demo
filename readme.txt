@@ -323,6 +323,7 @@ a72011ccdc2bcd23ba440f104c416193.gif    5.79 kB          [emitted]
                           styles.css    14.5 kB       1  [emitted]  index
                           index.html  442 bytes          [emitted]
 chunkhash没变，但是体积只有不到原来的不到8%
+但是layer在移动端和PC端很很大不同，需要新的支持，应该如何解决？
 
 
 31.Cannot use [chunkhash] for chunk in '[name].[chunkhash].js' (use [hash] instead)
@@ -338,6 +339,75 @@ https://www.jb51.net/article/138369.htm
 
 
 36.module
+exclude: /node_modules/
+任何loader都应该加入exclude: /node_modules/
+否则打包速度会慢
+使用了noParse的模块将不会被loaders解析，所以当我们使用的库如果太大，
+并且其中不包含require、define或者类似的关键字的时候(因为这些模块加载并不会被解析，所以就会报错)，我们就可以使用这项配置来提升性能。
+loash模块就是个例子
 
+
+37.resolve
+resolve.alias
+alias: {
+  Utilities: path.resolve(__dirname, 'src/utilities/'),
+  Templates: path.resolve(__dirname, 'src/templates/')
+}
+现在，替换「在导入时使用相对路径」这种方式，就像这样：
+import Utility from '../../utilities/utility';
+你可以这样使用别名：
+import Utility from 'Utilities/utility';
+这个最常用，其他用的少
+resolve.modules
+array 默认：modules: ["node_modules"]
+告诉 webpack 解析模块时应该搜索的目录。
+如果你想要添加一个目录到模块搜索目录，此目录优先于 node_modules/ 搜索：
+modules: [path.resolve(__dirname, "src"), "node_modules"]
+
+
+38.
+devServer: {
+  contentBase: path.join(__dirname, "dist"),
+  compress: true,
+  port: 9000
+}
+一定要加入compress:true,这个属性一般默认是false，代表是否gzip压缩，因为要兼容来的浏览器（20世纪），一般默认不压缩。
+如何看是否有效，在谷歌浏览器开发者工具栏——network——vendor.bundle.js——headers——response Headers——是否包含content-encoding:gzip
+没压缩2.9mb，压缩之后680kb，效果明显
+
+指定使用一个 host。默认是 localhost。如果你希望服务器外部可访问，指定如下：
+host: "0.0.0.0"
+这样可以ip访问
+
+devServer.historyApiFallback
+当使用 HTML5 History API 时，任意的 404 响应都可能需要被替代为 index.html
+historyApiFallback: true,
+但是这样不适用于多级目录，因为页面引入的js和css都是相对路径，多级目录会让相对路径指向错误的地址，
+比如http://10.1.77.30:8080/asdasd，可以重定向找到http://10.1.77.30:8080/index.html，以及http://10.1.77.30:8080/styles.css
+但是http://10.1.77.30:8080/asdasd/asdasd,就会找http://10.1.77.30:8080/asdasd/styles.css，就404
+这里有个解决方案，就是
+output: {
+    //filename: '[name].[chunkhash].js', // 生产环境使用
+    filename: '[name].bundle.js',
+    publicPath: "/",
+    //chunkFilename: '[name].[chunkhash].js',
+    path: path.resolve(__dirname, 'dist'),
+}
+重点在publicPath,如上设置，这样所有引用的路径就是以当前引用文件的路径为根路径的相对路径
+ <script type="text/javascript" src="/runtime.bundle.js"></script><script type="text/javascript" src="/vendor.bundle.js">
+ 如果不写，则如下
+<script type="text/javascript" src="runtime.bundle.js"></script><script type="text/javascript" src="vendor.bundle.js">
+通过传入一个对象，比如使用 rewrites 这个选项，此行为可进一步地控制：
+historyApiFallback: {
+  rewrites: [
+    { from: /^\/$/, to: '/views/landing.html' },
+    { from: /^\/subpage/, to: '/views/subpage.html' },
+    { from: /./, to: '/views/404.html' }
+  ]
+}
+https: true
+加入支持https之后，http就不支持了，证书可以自己配置
+inline和iframe的区别
+https://blog.csdn.net/chengnuo628/article/details/52441977
 
 

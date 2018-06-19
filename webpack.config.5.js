@@ -16,6 +16,9 @@ module.exports = {
     externals: {
     },
     module: {
+        noParse: function(content) {
+            return /jquery|lodash/.test(content);
+        },
         rules: [{
             test: /\.js$/,
             use: {
@@ -28,17 +31,35 @@ module.exports = {
             //use: ['style-loader', 'css-loader'],
             use: ExtractTextPlugin.extract({
                 use: 'css-loader'
-            })
+            }),
+            exclude: /node_modules/
         },
         {
             test: /\.(png|svg|jpg|gif)$/,
             use: [
                 'file-loader'
-            ]
+            ],
+            exclude: /node_modules/
         }]
     },
     devServer: {
-        contentBase: './dist',
+        headers: {
+            "X-Custom-Foo": "bar"
+        },
+        //historyApiFallback: {
+        //    rewrites: [
+        //        { from: /^\/$/, to: '/index.html' },
+        //        { from: /^\/subpage/, to: '/index.html' },
+        //        { from: /./, to: '/index.html' }
+        //    ]
+        //},
+        //https: true,
+        inline: false,
+        historyApiFallback: true,
+        contentBase: path.join(__dirname, "dist"),
+        compress: true,
+        host: '0.0.0.0',
+        disableHostCheck: true,
         hot: true
     },
     plugins: [
@@ -67,6 +88,7 @@ module.exports = {
     output: {
         //filename: '[name].[chunkhash].js', // 生产环境使用
         filename: '[name].bundle.js',
+        publicPath: "/",
         //chunkFilename: '[name].[chunkhash].js',
         path: path.resolve(__dirname, 'dist'),
     }

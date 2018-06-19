@@ -53,7 +53,7 @@ import './styles.css';
 function component() {
     var element = document.createElement('div');
 
-     element.innerHTML = _.join(['Hello', 'webpack55555'], ' ');
+     element.innerHTML = _.join(['Hello', 'webpack55'], ' ');
 
     return element;
 }
