@@ -16,3 +16,12 @@ http://www.ituring.com.cn/article/200534
 
 配置DevServer
 https://segmentfault.com/a/1190000013396072
+
+https://cloud.tencent.com/developer/section/1477376
+
+output.pubilcPath 和 devServer.publicPath的理解
+https://www.jianshu.com/p/cbe81be10d78
+
+
+nfs是什么
+https://www.cnblogs.com/alonones/p/6105586.html

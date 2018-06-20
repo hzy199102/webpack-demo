@@ -334,8 +334,9 @@ chunkhash没变，但是体积只有不到原来的不到8%
 json文件不能带有注释
 
 
-35.webpack 跨域问题处理
+35.webpack 跨域问题处理，proxy，代理
 https://www.jb51.net/article/138369.htm
+https://github.com/chimurai/http-proxy-middleware#options
 
 
 36.module
@@ -409,5 +410,16 @@ https: true
 加入支持https之后，http就不支持了，证书可以自己配置
 inline和iframe的区别
 https://blog.csdn.net/chengnuo628/article/details/52441977
+open:true 和host:0.0.0.0 不能一起用
+openPage: 'different/page' 可以指定打开的路径，有点用处
+overlay: 非常重要的一个属性，在网页上展示运行错误信息，而不止在控制台，这样更酷炫
+overlay: {
+  warnings: false,
+  errors: true
+}
+proxy： 跨域处理，非常经典的属性，使用了http-proxy-middleware
+publicPath 这个感觉鸡肋
+watchOptions：这个涉及到文件系统概念（nfs）,后期会有更详细的介绍
 
-
+39.nfs是什么
+https://www.cnblogs.com/alonones/p/6105586.html

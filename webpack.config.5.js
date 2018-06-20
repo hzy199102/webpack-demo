@@ -54,7 +54,11 @@ module.exports = {
         //    ]
         //},
         //https: true,
-        inline: false,
+        //open: true,
+        //openPage: 'different/page',
+        //publicPath: "/aa/",
+        overlay: true,
+        inline: true,
         historyApiFallback: true,
         contentBase: path.join(__dirname, "dist"),
         compress: true,
