@@ -4,13 +4,13 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const webpack = require('webpack');
 
-module.exports = {
+const config = {
     entry: {
         index: './src/five_layer/index.js',
-        //vendor: [
-        //    'lodash',
-        //    'jquery'
-        //]
+        vendor: [
+           'lodash',
+           'jquery'
+        ]
     },
     devtool: 'inline-source-map',
     externals: {
@@ -78,22 +78,36 @@ module.exports = {
             name: 'runtime'
         }),
         new webpack.NamedModulesPlugin(),
-        new webpack.HotModuleReplacementPlugin(),
-        new ExtractTextPlugin('styles.css'),
+        new ExtractTextPlugin('[name].[contenthash].css'),
         new webpack.ProvidePlugin({
-            //$: 'jquery',
-            //jQuery: 'jquery',
-            //'window.jQuery': 'jquery',
-            //'window.$': 'jquery',
-            //'window._': 'lodash',
-            //'_': 'lodash'
+            $: 'jquery',
+            jQuery: 'jquery',
+            'window.jQuery': 'jquery',
+            'window.$': 'jquery',
+            'window._': 'lodash',
+            '_': 'lodash'
         })
     ],
     output: {
-        //filename: '[name].[chunkhash].js', // 生产环境使用
         filename: '[name].bundle.js',
         publicPath: process.env.NODE_ENV === 'development' ? "/" : '',
-        //chunkFilename: '[name].[chunkhash].js',
         path: path.resolve(__dirname, 'dist'),
     }
 };
+
+if (process.env.NODE_ENV === 'development') {
+    config.devtool = "inline-source-map"
+    config.plugins.push(new webpack.HotModuleReplacementPlugin())
+} else {
+    config.performance = {
+        hints: "error",
+        maxAssetSize: 2500000
+    }
+    config.output.chunkFilename = '[name].[chunkhash].js'
+    config.output.filename = '[name].[chunkhash].js' // 生产环境使用
+    config.plugins.push(new webpack.optimize.UglifyJsPlugin({
+        compress: process.env.NODE_ENV === 'production'
+    }))
+}
+
+module.exports = config;

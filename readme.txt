@@ -191,7 +191,7 @@ runtime bundle 会因为当前包含一个新模块的引用，而发生变化�
 
 21.NODE_ENV不是内部或外部命令,也不是可运行的程序
 解决办法：安装across-env:
-npm install cross-env –save-dev
+npm install cross-env –-save-dev
 "build_p": "cross-env NODE_ENV=production PLATFORM=web webpack",
 当然也可以不安装across-env，而是如下写法
 "build_p2": "set NODE_ENV=development && set PLATFORM=web && webpack",
@@ -323,6 +323,7 @@ a72011ccdc2bcd23ba440f104c416193.gif    5.79 kB          [emitted]
                           index.html  442 bytes          [emitted]
 chunkhash没变，但是体积只有不到原来的不到8%
 但是layer在移动端和PC端很很大不同，需要新的支持，应该如何解决？
+
 
 
 31.Cannot use [chunkhash] for chunk in '[name].[chunkhash].js' (use [hash] instead)
@@ -465,4 +466,48 @@ https://www.cnblogs.com/alonones/p/6105586.html
 40.引入cdn的第三方库
 目的是进一步压缩vendor的大小，当然这个仅仅是调研一种性能优化上的解决方案
 https://segmentfault.com/a/1190000012113011 webpack externals 深入理解
+之前在引入layer方案中是通过
+new webpack.ProvidePlugin({
+    $: 'jquery',
+    jQuery: 'jquery',
+    'window.jQuery': 'jquery',
+    'window.$': 'jquery',
+    'window._': 'lodash',
+    '_': 'lodash'
+})
+将npm包设置成全局，然后在每次需要引用jquery的时候省去import $ from 'jquery';这段代码
+但是这是npm方案，需要引入jquery包，在打包时会加大vendor包的体积，如果是cdn方案该如何做呢？
+首先在index.html中通过script标签引入cdn地址，然后
+externals: {
+  "lodash": {
+        commonjs: "lodash",//如果我们的库运行在Node.js环境中，import _ from 'lodash'等价于const _ = require('lodash')
+        commonjs2: "lodash",//同上
+        amd: "lodash",//如果我们的库使用require.js等加载,等价于 define(["lodash"], factory);
+        root: "_"//如果我们的库在浏览器中使用，需要提供一个全局的变量‘_’，等价于 var _ = (window._) or (_);
+  }
+}
+总得来说，externals配置就是为了使import _ from 'lodash'这句代码，在本身不引入lodash的情况下，能够在各个环境都能解释执行。
+有一点需要注意的是，假如lodash中在浏览器环境中不提供_的全局变量，那么就没有办法使用。这个"_"是不能随便乱写的。
+如果外部库lodash提供的是全局变量lodash,那你就得使用lodash。
+如果你写的库要支持各种环境，你需要设置output中的libraryTarget为umd，也就是将打包的文件，生成为umd规范，
+适用于各种环境。libraryTarget和externals有藕断丝连的关系，后面会提到。
+可以先npm uninstall lodash
+npm uninstall jquery
+npm install lodash --save-dev
+npm install jquery --save-dev
+证明可行
+插曲，安装lodash之后，总显示_不存在，怀疑是安装出错的原因，重新安装之后,仍然有问题，为何？后来无意中发现，哪怕我关闭了idea，
+网页仍然有效，查看进程，发现node.js没有被终止，之前是习惯性关闭cmd窗口去终止node.js的进程，发现不是每台电脑都这样，环境的差异，nodejs
+版本的差异会导致不同的结果，应该明确终止进程，才能确保修改的代码能被实时使用。
+另外在本例子中，jquery和lodash都可以直接script引入而无需配置externals，代码能正常运行
 
+
+41.hash,chunkhash,contenthash的区别
+https://www.jb51.net/article/132275.htm hash,chunkhash,contenthash的区别
+总的来说：
+采用hash计算的话，每一次构建后生成的哈希值都不一样，即使文件内容压根没有改变。这样子是没办法实现缓存效果，我们需要换另一种哈希值计算方式，即chunkhash。
+chunkhash和hash不一样，它根据不同的入口文件(Entry)进行依赖文件解析、构建对应的chunk，生成对应的哈希值。我们在生产环境里把一些公共库和程序入口文件区分开，
+单独打包构建，接着我们采用chunkhash的方式生成哈希值，那么只要我们不改动公共库的代码，就可以保证其哈希值不会受影响。
+在chunkhash的例子，我们可以看到由于index.css被index.js引用了，所以共用相同的chunkhash值。但是这样子有个问题，如果index.js更改了代码，
+css文件就算内容没有任何改变，由于是该模块发生了改变，导致css文件会重复构建。
+这个时候，我们可以使用extra-text-webpack-plugin里的contenthash值，保证即使css文件所处的模块里就算其他文件内容改变，只要css文件内容不变，那么不会重复构建。

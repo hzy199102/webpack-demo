@@ -1,5 +1,7 @@
 // 旧的浏览器中使用 require.ensure 请记得 去 shim Promise. es6-promise polyfill.
-//import 'promise-polyfill/src/polyfill';
+import 'promise-polyfill/src/polyfill';
+// import jQuery from 'jquery';
+// import _ from 'lodash';
 import './layer/theme/default/layer.css';
 require.ensure([], function(require){
     require('./layer/layer.js')
