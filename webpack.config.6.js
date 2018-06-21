@@ -6,15 +6,13 @@ const webpack = require('webpack');
 
 module.exports = {
     entry: {
-        index: './src/five_layer/index.js',
-        //vendor: [
-        //    'lodash',
-        //    'jquery'
-        //]
+        index: './src/six_externals/index.js',
+        vendor: [
+            'lodash',
+            'jquery'
+        ]
     },
     devtool: 'inline-source-map',
-    externals: {
-    },
     module: {
         noParse: function(content) {
             return /jquery|lodash/.test(content);
@@ -69,7 +67,7 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin(['dist']),
         new HtmlWebpackPlugin({
-            template:'./src/five_layer/index.html',
+            template:'./src/six_externals/index.html',
         }),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor'
@@ -81,14 +79,24 @@ module.exports = {
         new webpack.HotModuleReplacementPlugin(),
         new ExtractTextPlugin('styles.css'),
         new webpack.ProvidePlugin({
-            //$: 'jquery',
-            //jQuery: 'jquery',
-            //'window.jQuery': 'jquery',
-            //'window.$': 'jquery',
-            //'window._': 'lodash',
-            //'_': 'lodash'
+            $: 'jquery',
+            jQuery: 'jquery',
+            'window.jQuery': 'jquery',
+            'window.$': 'jquery',
+            'window._': 'lodash',
+            '_': 'lodash'
         })
     ],
+    externals: {
+        //$: 'jQuery',
+        //$12: 'jQuery',
+        //jQuery: 'jQuery',
+        //lodash : {
+        //    commonjs: "lodash",
+        //    amd: "lodash",
+        //    root: "_2" // indicates global variable
+        //}
+    },
     output: {
         //filename: '[name].[chunkhash].js', // 生产环境使用
         filename: '[name].bundle.js',

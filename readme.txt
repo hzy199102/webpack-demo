@@ -247,7 +247,6 @@ require.ensure([], function(require){
 
 
 
-
 29.引入layer
 这是紧急需求，相当于引入第三方库
 采用require引入，require('./layer/layer.js')，但是发现它关联jquery，于是全局引入jquery，当然也可以在它之前指定引入，但是jquery
@@ -398,6 +397,8 @@ output: {
  <script type="text/javascript" src="/runtime.bundle.js"></script><script type="text/javascript" src="/vendor.bundle.js">
  如果不写，则如下
 <script type="text/javascript" src="runtime.bundle.js"></script><script type="text/javascript" src="vendor.bundle.js">
+注意，这些都是开发环境下的配置，在生产环境下output.publicPath还需要另外配置，
+这个可以查看 21.NODE_ENV不是内部或外部命令,也不是可运行的程序，也可以查看webpack.config.5.js的相关配置
 通过传入一个对象，比如使用 rewrites 这个选项，此行为可进一步地控制：
 historyApiFallback: {
   rewrites: [
@@ -419,7 +420,49 @@ overlay: {
 }
 proxy： 跨域处理，非常经典的属性，使用了http-proxy-middleware
 publicPath 这个感觉鸡肋
+https://segmentfault.com/q/1010000008980858 动态配置
+publicPath （文档）
+配置了 publicPath后， url = '主机名' + 'publicPath配置的' +
+'原来的url.path'。这个其实与 output.publicPath 用法大同小异。
+output.publicPath 是作用于 js, css, img 。而 devServer.publicPath 则作用于请求路径上的。
+// devServer.publicPath
+publicPath: "/assets/"
+
+// 原本路径 --> 变换后的路径
+http://localhost:8080/app.js --> http://localhost:8080/assets/app.js
+
 watchOptions：这个涉及到文件系统概念（nfs）,后期会有更详细的介绍
+watchOptions （文档）
+一组自定义的监听模式，用来监听文件是否被改动过。
+watchOptions: {
+  aggregateTimeout: 300,
+  poll: 1000，
+  ignored: /node_modules/
+}
+aggregateTimeout：一旦第一个文件改变，在重建之前添加一个延迟。填以毫秒为单位的数字。
+ignored：观察许多文件系统会导致大量的CPU或内存使用量。可以排除一个巨大的文件夹。
+
+poll：填以毫秒为单位的数字。每隔（你设定的）多少时间查一下有没有文件改动过。不想启用也可以填false。
+当您有一个单独的API后端开发服务器，并且想要在同一个域上发送API请求时，则代理这些 url 。看例子好理解。
+  proxy: {
+    '/proxy': {
+        target: 'http://your_api_server.com',
+        changeOrigin: true,
+        pathRewrite: {
+            '^/proxy': ''
+        }
+  }
+假设你主机名为 localhost:8080 , 请求 API 的 url 是 http：//your_api_server.com/user/list
+'/proxy'：如果点击某个按钮，触发请求 API 事件，这时请求 url 是http：//localhost:8080/proxy/user/list 。
+changeOrigin：如果 true ，那么 http：//localhost:8080/proxy/user/list 变为 http：//your_api_server.com/proxy/user/list 。但还不是我们要的 url 。
+pathRewrite：重写路径。匹配 /proxy ，然后变为'' ，那么 url 最终为 http：//your_api_server.com/user/list 。
+
 
 39.nfs是什么
 https://www.cnblogs.com/alonones/p/6105586.html
+
+
+40.引入cdn的第三方库
+目的是进一步压缩vendor的大小，当然这个仅仅是调研一种性能优化上的解决方案
+https://segmentfault.com/a/1190000012113011 webpack externals 深入理解
+
