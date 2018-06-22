@@ -73,21 +73,19 @@ const config = {
         new webpack.NamedModulesPlugin(),
         new ExtractTextPlugin('[name].[contenthash].css'),
         new webpack.ProvidePlugin({
-            // $: 'jquery',
-            // jQuery: 'jquery',
-            // 'window.jQuery': 'jquery',
-            // 'window.$': 'jquery',
-            // 'window._': 'lodash',
-            // '_': 'lodash'
+            // $2: 'jQuery',
+            'hzy': 'lodash'
         })
     ],
     externals: {
-        $: 'jQuery',
-        jQuery: 'jQuery',
-        jquery: 'jQuery',
+        //$: 'jQuery',
+        //jQuery: 'jQuery',
+        //jquery: 'jQuery',
         lodash : {
             commonjs: "lodash",
+            commonjs2: "lodash",
             amd: "lodash",
+            //global: "_",
             root: "_" // indicates global variable
         }
     },

@@ -466,6 +466,14 @@ https://www.cnblogs.com/alonones/p/6105586.html
 40.引入cdn的第三方库
 目的是进一步压缩vendor的大小，当然这个仅仅是调研一种性能优化上的解决方案
 https://segmentfault.com/a/1190000012113011 webpack externals 深入理解
+import _ from 'lodash';是引入npm包，打包文件会变大，所以通过cdn引入，即script引入，用到externals
+这时候import _ from 'lodash'就不在引npm包，而是引cdn的文件，这个可以通过打包日志清晰反映出来。
+
+
+
+
+
+
 之前在引入layer方案中是通过
 new webpack.ProvidePlugin({
     $: 'jquery',
@@ -511,3 +519,9 @@ chunkhash和hash不一样，它根据不同的入口文件(Entry)进行依赖文
 在chunkhash的例子，我们可以看到由于index.css被index.js引用了，所以共用相同的chunkhash值。但是这样子有个问题，如果index.js更改了代码，
 css文件就算内容没有任何改变，由于是该模块发生了改变，导致css文件会重复构建。
 这个时候，我们可以使用extra-text-webpack-plugin里的contenthash值，保证即使css文件所处的模块里就算其他文件内容改变，只要css文件内容不变，那么不会重复构建。
+
+
+42.lodash模块在被remove之后，并且在程序中不在调用之后，居然每次运行还是会提示找不到lodash模块，于是npm cache clean,接着npm install,恢复正常。
+
+
+
