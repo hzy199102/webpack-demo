@@ -524,4 +524,28 @@ css文件就算内容没有任何改变，由于是该模块发生了改变，�
 42.lodash模块在被remove之后，并且在程序中不在调用之后，居然每次运行还是会提示找不到lodash模块，于是npm cache clean,接着npm install,恢复正常。
 
 
+43.多个活动项目（都是vue结构），合并成一个项目，通过命令去打包不同模块，抽取出公共组件
+合并的原因是太多类似的组件和代码，每次修改可能要多个项目同时修改，切换idea，重复性的修改相同的东西，很容易造成遗漏和疲劳，所以合并方便统一管理。
+合并的关键是只新建一个项目，每个活动业务都分别放在一个文件夹中，作为一个大的业务模块，通过package.json的命令去控制打包项目。
+难点和坑很多，逐一说明：
+1.package.json中的命令要传参，代表打包不同的业务（文件夹），最开始的vue脚手架通过node build/build.js 和 node build/dev-server.js去编译和启动项目，传参可以是
+ node build/build.js odin(文件夹名称)，js文件通过process.argv去读取参数，但是这样第一太low，不能形成key-value这样的取值，第二局限性很大，在vue脚手架升级改版之后，
+ 通过npm run dev去启动项目，而dev 指的是webpack-dev-server --inline --progress --open --config build/webpack.dev.conf.js，那么这时候上述方法无法传值，这里使用
+ cross-env（readme.txt有详细教程），然后cross-env project=ironman_1 node build/build.js这样命令，接收参数非常方便global.currentProject = process.env.project
+ 2.因为现在打包是指定了特定的文件夹，就是打包入口地址是参数化的，所以需要对所有涉及到入口地址的地方进行参数化修正，这里一一列出：
+ webpack.base.conf.js 所有有src的地方，全部修正为global.currentProject + '/src'，
+ webpack.dev.conf.js HtmlWebpackPlugin中的template: global.currentProject + '/index.html',这个地方特别注意，如果没有写对，编译会报错，但是不会指出错误原因，
+ 所以是非常细节的点，另外CopyWebpackPlugin的相关内容注释掉，如果是build打包，因为路径的原因总是会出错，但是不知道错在哪，但是注释掉什么都不影响
+ webpack.prod.conf.js 操作和webpack.dev.conf.js一模一样
+ 3.vue脚手架版本的原因，可能存在config/index.js文件在dev对象和build对象没有引入env: require('./dev.env'),和env: require('./prod.env'),会提示找不到env参数
+ 4.涉及不同的活动，又在一个项目，自然存在port的问题，就在config/index.js,dev对象修正port: global.currentPort
+ 5.项目打包的出口应该是可配置化的，所以在config/index.js,build对象修正assetsPublicPath: eventConfigJson.assetsPath,
+ 以上就是vue脚手架的基本修正，业务修正需要深入业务代码，这里只简单的说明遇到的问题：
+ 1.目前集成了3个项目，但是3个项目开展历史递进的，所以在设计上存在上下不兼容，最早的项目设计老旧，很多可以配置化的详谈功能的组件不能直接提出来复用，
+ 这个问题有2个原因造成，一个是当初设计时候的思路过于简单，第二是编程人员水平明显参差不齐，有些代码写的太落后，不符合规范导致组件抽象还要完全重写代码
+ 解决方案就只有下次书写的时候定义代码规范，定期代码审核，但是我没有这么高的权限去约束别人，所以基本无解。
+ ps:幸亏研究了点webpack，否则这次悬。本来有一个项目已经实现多项目合并成一个项目，但是返现使用的是早起的vue脚手架，质量不行，另外合并的多个项目均由一个人开发，
+ 所以合并起来在业务代码上，配置文件上没有太多难度，所以更简单，如果多个人开发，那配置文件完全不同，代码风格杂乱，在抽取公共组件，命令指定活动打包的时候简直是灾难。
+
+
 
