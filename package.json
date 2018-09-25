@@ -6,13 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cross-env NODE_ENV=production webpack --env=6",
+    "build_d": "cross-env NODE_ENV=development webpack --env=6",
     "build_p": "cross-env NODE_ENV=production PLATFORM=web webpack",
     "build_p2": "set NODE_ENV=development && set PLATFORM=web && webpack",
     "build_4": "webpack --mode development",
     "watch": "webpack --watch",
     "start": "cross-env NODE_ENV=development webpack-dev-server --env=6",
     "server": "node server.js",
-    "chart": "webpack --profile --json > stats.json"
+    "chart": "webpack --profile --json > stats.json",
+    "build_d_1": "cross-env NODE_ENV=development webpack --env=1",
+    "build_p_1": "cross-env NODE_ENV=production webpack --env=1"
   },
   "repository": {
     "type": "git",

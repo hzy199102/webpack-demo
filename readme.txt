@@ -554,5 +554,17 @@ css文件就算内容没有任何改变，由于是该模块发生了改变，�
  有不一样的元素，正面抽取的还不够彻底。另外抽取公共组件要切记一个事情，原则上不改变之前项目的代码，就是调用的组件还是之前的组件，
  而不改为现在公共的组件，否则工作量太大，应该是为以后的项目做准备。
 
+ 45.babel-preset-env相关调研，参考14
+ https://blog.csdn.net/houdabiao/article/details/78620202 babel配置，这个真详细--
+ 之前一直使用babel-preset-es2015，简单解释下babel概念：
+ babel官网正中间一行黄色大字写着“babel is a javascript compiler”，翻译一下就是babel是一个javascript转译器。
+ 为什么会有babel存在呢？原因是javascript在不断的发展，但是浏览器的发展速度跟不上。
+ 以es6为例，es6中为javascript增加了箭头函数、块级作用域等新的语法和Symbol、Promise等新的数据类型，但是这些语法和数据类型并不能够马上被现在的浏览器全部支持，
+ 为了能在现有的浏览器上使用js新的语法和新的数据类型，就需要使用一个转译器，将javascript中新增的特性转为现代浏览器能理解的形式。babel就是做这个方面的转化工作。
+
+调研分4部分：参数的作用和配置；对浏览器的兼容情况；文件大小；相对babel-preset-es2015的优势
+
+
+
 
 

@@ -6,7 +6,7 @@ const webpack = require('webpack');
 
 const config = {
     entry: {
-        index: './src/six_externals/index.js'
+        index: './src/1809/1/index.js'
     },
     module: {
         noParse: function(content) {
@@ -62,7 +62,7 @@ const config = {
     plugins: [
         new CleanWebpackPlugin(['dist']),
         new HtmlWebpackPlugin({
-            template:'./src/six_externals/index.html',
+            template:'./src/1809/1/index.html',
         }),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor'
